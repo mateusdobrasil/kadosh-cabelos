@@ -1,10 +1,38 @@
 'use client'
+import { useState } from 'react'
 import { useCarrinho } from '@/src/contexts/CarrinhoContext'
 import { formatarReal } from '@/src/lib/format'
 import { gerarLinkWhatsApp } from '@/src/lib/whatsapp'
+import { criarClienteBrowser } from '@/src/lib/supabase/client'
 
 export default function CarrinhoDrawer() {
   const { itens, aberto, fechar, total, alterarQtd, remover, limpar } = useCarrinho()
+  const [nome, setNome] = useState('')
+  const [enviando, setEnviando] = useState(false)
+
+  async function finalizar() {
+    setEnviando(true)
+
+    // 1. registra o pedido como "pendente" no sistema
+    const supabase = criarClienteBrowser()
+    const payload = itens.map((i) => ({
+      variacao_id: i.variacaoId,
+      quantidade: i.quantidade,
+    }))
+    try {
+      await supabase.rpc('criar_pedido_pendente', {
+        p_itens: payload,
+        p_cliente: nome.trim() || null,
+      })
+    } catch {
+      // se falhar, ainda assim leva o cliente ao WhatsApp
+    }
+
+    // 2. abre o WhatsApp com o pedido montado e esvazia a sacola
+    const link = gerarLinkWhatsApp(itens, nome.trim() || undefined)
+    limpar()
+    window.location.href = link
+  }
 
   return (
     <>
@@ -84,20 +112,25 @@ export default function CarrinhoDrawer() {
             </div>
 
             <div className="border-t border-[var(--line)] px-5 py-5">
+              <input
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Seu nome (ajuda no atendimento)"
+                className="mb-3 w-full rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--brand)]"
+              />
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-[var(--muted)]">Total</span>
                 <span className="font-display text-2xl text-[var(--plum)]">
                   {formatarReal(total)}
                 </span>
               </div>
-              <a
-                href={gerarLinkWhatsApp(itens)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-full bg-[#1FA855] py-4 text-center font-medium text-white transition hover:bg-[#178a45]"
+              <button
+                onClick={finalizar}
+                disabled={enviando}
+                className="block w-full rounded-full bg-[#1FA855] py-4 text-center font-medium text-white transition hover:bg-[#178a45] disabled:opacity-60"
               >
-                Finalizar pelo WhatsApp
-              </a>
+                {enviando ? 'Abrindo WhatsApp...' : 'Finalizar pelo WhatsApp'}
+              </button>
               <button
                 onClick={limpar}
                 className="mt-3 w-full text-center text-xs text-[var(--muted)] underline"
