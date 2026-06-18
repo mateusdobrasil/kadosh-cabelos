@@ -34,6 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin" className="hover:text-[var(--brand)]">Painel</Link>
               <Link href="/admin/produtos" className="hover:text-[var(--brand)]">Produtos</Link>
               <Link href="/admin/estoque" className="hover:text-[var(--brand)]">Estoque</Link>
+              <Link href="/admin/vendas" className="hover:text-[var(--brand)]">Vendas</Link>
               <Link href="/admin/financeiro" className="hover:text-[var(--brand)]">Financeiro</Link>
             </nav>
           </div>
