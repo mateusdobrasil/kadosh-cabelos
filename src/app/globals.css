@@ -1,0 +1,52 @@
+@import "tailwindcss";
+/* OBS: se o seu globals.css usar as 3 linhas "@tailwind base; @tailwind components;
+   @tailwind utilities;" em vez da linha acima, mantenha as 3 e remova o @import. */
+
+:root {
+  /* ---- Paleta Kadosh (baseada no logo) ---- */
+  --bg: #F6F5F1;          /* fundo off-white */
+  --surface: #E9E7E0;     /* fundo de imagens/placeholders */
+  --brand: #1B93A4;       /* turquesa principal */
+  --brand-deep: #15707D;  /* turquesa escuro (hover) */
+  --tint: #E1EFF1;        /* turquesa bem clarinho (preenchimentos sutis) */
+  --ink: #222A2D;         /* grafite (títulos e texto) */
+  --muted: #6F787B;       /* texto secundário */
+  --line: rgba(34, 42, 45, 0.12);
+  --overlay: rgba(34, 42, 45, 0.45);
+
+  /* ---- Apelidos antigos (mantêm os componentes funcionando) ---- */
+  /* Você pode ignorar estes nomes; eles só apontam para os tokens acima. */
+  --cream: var(--bg);
+  --cream-deep: var(--surface);
+  --plum: var(--brand);
+  --plum-soft: var(--brand-deep);
+  --gold: var(--brand);
+  --gold-soft: var(--tint);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* foco visível para acessibilidade (teclado) */
+*:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
